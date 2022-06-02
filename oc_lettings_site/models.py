@@ -16,6 +16,7 @@ class Address(models.Model):
 
     class Meta:
         verbose_name_plural = "Addresses"
+        db_table = "oc_lettings_site_address"
 
 
 class Letting(models.Model):
@@ -25,6 +26,9 @@ class Letting(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        db_table = "oc_lettings_site_letting"
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -32,3 +36,6 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    class Meta:
+        db_table = "oc_lettings_site_profile"
