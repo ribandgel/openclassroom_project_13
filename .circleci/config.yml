@@ -1,0 +1,18 @@
+version: 2.1
+jobs:
+  deploy:
+    executor: heroku/default
+    steps:
+      - checkout
+      - heroku/install
+      - heroku/push-docker-image:
+        app-name: oc-lettings-ribeiro
+      - heroku/release-docker-image:
+        app-name: oc-lettings-ribeiro
+
+orbs: 
+  heroku: circleci/heroku@1.2.6
+workflows:
+  heroku_deploy:
+    jobs:
+      - deploy
