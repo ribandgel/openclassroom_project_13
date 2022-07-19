@@ -10,17 +10,13 @@ jobs:
         version: 20.10.11
         docker_layer_caching: true
       - heroku/install
-      - run:
-        name: Create app on heroku
-        command: HEROKU_API_KEY=${HEROKU_API_KEY} heroku apps:create oc-lettings-ribeiro || true
+      - run: HEROKU_API_KEY=${HEROKU_API_KEY} heroku apps:create oc-lettings-ribeiro || true
       - run: |
           HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set SECRET_KEY=${SECRET_KEY} -a oc-lettings-ribeiro
           HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set DEBUG=false -a oc-lettings-ribeiro
           HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set ALLOWED_HOSTS=${ALLOWED_HOSTS} -a oc-lettings-ribeiro
-      - heroku/push-docker-image:
-        process-types: web
-      - heroku/release-docker-image:
-        process-types: web
+      - heroku/push-docker-image
+      - heroku/release-docker-image
 workflows:
   heroku_deploy:
     jobs:
