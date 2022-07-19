@@ -1,4 +1,6 @@
 version: 2.1
+orbs: 
+  heroku: circleci/heroku@1.2.6
 jobs:
   push-image-on-heroku:
     executor: heroku/default
@@ -11,9 +13,7 @@ jobs:
       - run:
         name: Create app on heroku
         command: HEROKU_API_KEY=${HEROKU_API_KEY} heroku apps:create oc-lettings-ribeiro || true
-      - run:
-        name: Set environment variables
-        command: |
+      - run: |
           HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set SECRET_KEY=${SECRET_KEY} -a oc-lettings-ribeiro
           HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set DEBUG=false -a oc-lettings-ribeiro
           HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set ALLOWED_HOSTS=${ALLOWED_HOSTS} -a oc-lettings-ribeiro
@@ -21,9 +21,6 @@ jobs:
         process-types: web
       - heroku/release-docker-image:
         process-types: web
-
-orbs: 
-  heroku: circleci/heroku@1.2.6
 workflows:
   heroku_deploy:
     jobs:
