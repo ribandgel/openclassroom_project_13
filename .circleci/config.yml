@@ -16,8 +16,8 @@ jobs:
           HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set SECRET_KEY=${SECRET_KEY} -a oc-lettings-ribeiro
           HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set DEBUG=false -a oc-lettings-ribeiro
           HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set ALLOWED_HOSTS=${ALLOWED_HOSTS} -a oc-lettings-ribeiro
-      - heroku/push-docker-image
-      - heroku/release-docker-image
+      - run: heroku container:push -a oc-lettings-ribeiro
+      - run: heroku container:release -a oc-lettings-ribeiro
 workflows:
   heroku_deploy:
     jobs:
