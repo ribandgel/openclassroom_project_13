@@ -2,13 +2,10 @@ version: 2.1
 orbs: 
   heroku: circleci/heroku@1.2.6
 jobs:
-  push-image-on-heroku:
+  push_image_on_heroku:
     executor: heroku/default
     steps:
       - checkout
-      - setup_remote_docker:
-        version: 20.10.11
-        docker_layer_caching: true
       - heroku/install
       - run: HEROKU_API_KEY=${HEROKU_API_KEY} heroku apps:create oc-lettings-ribeiro || true
       - run: |
@@ -20,4 +17,4 @@ jobs:
 workflows:
   heroku_deploy:
     jobs:
-      - push-image-on-heroku
+      - push_image_on_heroku
