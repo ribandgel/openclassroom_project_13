@@ -4,8 +4,12 @@ orbs:
 jobs:
   push_image_on_heroku:
     executor: heroku/default
+    docker:
+      - image: cimg/base:2022.06
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.14
       - heroku/install
       - run: HEROKU_API_KEY=${HEROKU_API_KEY} heroku apps:create oc-lettings-ribeiro || true
       - run: |
