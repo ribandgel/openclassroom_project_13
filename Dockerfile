@@ -6,8 +6,7 @@ ENV PYTHONUNBUFFERED 1
 ENV DEBUG 0
 RUN apt update \
     && apt install -y build-essential gcc python3-dev musl-dev \
-    && apt install -y postgresql \
-    && pip install psycopg2
+    && apt install -y postgresql
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 COPY . .

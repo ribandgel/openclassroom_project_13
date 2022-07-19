@@ -1,18 +1,30 @@
 version: 2.1
 jobs:
-  deploy:
+  push-image-on-heroku:
     executor: heroku/default
     steps:
       - checkout
+      - setup_remote_docker:
+        version: 20.10.11
+        docker_layer_caching: true
       - heroku/install
+      - run:
+        name: Create app on heroku
+        command: HEROKU_API_KEY=${HEROKU_API_KEY} heroku apps:create oc-lettings-ribeiro || true
+      - run:
+        name: Set environment variables
+        command: |
+          HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set SECRET_KEY=${SECRET_KEY} -a oc-lettings-ribeiro
+          HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set DEBUG=false -a oc-lettings-ribeiro
+          HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set ALLOWED_HOSTS=${ALLOWED_HOSTS} -a oc-lettings-ribeiro
       - heroku/push-docker-image:
-        app-name: oc-lettings-ribeiro
+        process-types: web
       - heroku/release-docker-image:
-        app-name: oc-lettings-ribeiro
+        process-types: web
 
 orbs: 
   heroku: circleci/heroku@1.2.6
 workflows:
   heroku_deploy:
     jobs:
-      - deploy
+      - push-image-on-heroku
