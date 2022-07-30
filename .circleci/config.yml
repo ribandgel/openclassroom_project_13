@@ -8,12 +8,10 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run:
-        name: Create docker image and push to docker hub
-        command: |
-          docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-          docker build --build-args SECRET_KEY=${SECRET_KEY} -t oc-lettings-ribeiro:$CIRCLE_SHA1 .
-          docker push hamsterozor/oc-lettings-ribeiro:$CIRCLE_SHA1
+      - run: |
+        docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+        docker build --build-args SECRET_KEY=${SECRET_KEY} -t oc-lettings-ribeiro:$CIRCLE_SHA1 .
+        docker push hamsterozor/oc-lettings-ribeiro:$CIRCLE_SHA1
   push_image_on_heroku:
     executor: heroku/default
     docker:
