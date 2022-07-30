@@ -1,16 +1,13 @@
 version: 2.1
 orbs: 
   heroku: circleci/heroku@1.2.6
-  python: circleci/python@2.0.3
 jobs:
   tests:
-    executor: python/default
     docker:
       - image: cimg/python:3.10.2
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
+      - run: pip install -r requirements.txt
       - run: python manage.py test
       - run: ./autoformat.sh
   push_image_on_docker_hub:
