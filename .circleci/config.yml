@@ -2,6 +2,18 @@ version: 2.1
 orbs: 
   heroku: circleci/heroku@1.2.6
 jobs:
+  push_image_on_docker_hub:
+    docker:
+      - image: cimg/python:3.10.2
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+        name: Create docker image and push to docker hub
+        command: |
+          docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+          docker build --build-args SECRET_KEY=${SECRET_KEY} -t oc-lettings-ribeiro:$CIRCLE_SHA1 .
+          docker push hamsterozor/oc-lettings-ribeiro:$CIRCLE_SHA1
   push_image_on_heroku:
     executor: heroku/default
     docker:
@@ -22,4 +34,5 @@ jobs:
 workflows:
   heroku_deploy:
     jobs:
+      - push_image_on_docker_hub
       - push_image_on_heroku
