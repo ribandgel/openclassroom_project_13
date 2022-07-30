@@ -19,7 +19,7 @@ jobs:
           version: 20.10.14
       - run: |
           docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-          docker build --build-arg SECRET_KEY=${SECRET_KEY} -t oc-lettings-ribeiro:$CIRCLE_SHA1 .
+          docker build --build-arg SECRET_KEY=${SECRET_KEY} -t hamsterozor/oc-lettings-ribeiro:$CIRCLE_SHA1 .
           docker push hamsterozor/oc-lettings-ribeiro:$CIRCLE_SHA1
   push_image_on_heroku:
     executor: heroku/default
