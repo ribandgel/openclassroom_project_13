@@ -42,5 +42,13 @@ workflows:
   heroku_deploy:
     jobs:
       - tests
-      - push_image_on_docker_hub
-      - push_image_on_heroku
+      - push_image_on_docker_hub:
+        filters:
+            branches:
+              only:
+                - master
+      - push_image_on_heroku:
+        filters:
+            branches:
+              only:
+                - master
