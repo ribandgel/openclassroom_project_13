@@ -10,7 +10,7 @@ jobs:
       - setup_remote_docker
       - run: | 
           docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-          docker build --build-args SECRET_KEY=${SECRET_KEY} -t oc-lettings-ribeiro:$CIRCLE_SHA1 .
+          docker build --build-arg SECRET_KEY=${SECRET_KEY} -t oc-lettings-ribeiro:$CIRCLE_SHA1 .
           docker push hamsterozor/oc-lettings-ribeiro:$CIRCLE_SHA1
   push_image_on_heroku:
     executor: heroku/default
