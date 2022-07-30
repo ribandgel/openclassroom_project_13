@@ -43,12 +43,12 @@ workflows:
     jobs:
       - tests
       - push_image_on_docker_hub:
-        filters:
+          filters:
             branches:
               only:
                 - master
       - push_image_on_heroku:
-        filters:
+          filters:
             branches:
               only:
                 - master
