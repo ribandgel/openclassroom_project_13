@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 from .models import Profile
 
+
 class TestProfileViews(TestCase):
     def test_profile_index(self):
         client = Client()
@@ -19,4 +20,3 @@ class TestProfileViews(TestCase):
         Profile.objects.create(user=user, favorite_city="Valence")
         response = client.get(reverse("profile", kwargs={"username": "blob"}))
         self.assertIs("Favorite city: Valence" in str(response.content), True)
-        
