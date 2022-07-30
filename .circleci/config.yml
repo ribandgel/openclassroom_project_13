@@ -4,7 +4,7 @@ orbs:
 jobs:
   push_image_on_docker_hub:
     docker:
-      - image: cimg/python:3.10.2
+      - image: cimg/base:2022.06
     steps:
       - checkout
       - setup_remote_docker
