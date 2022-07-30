@@ -2,17 +2,25 @@ version: 2.1
 orbs: 
   heroku: circleci/heroku@1.2.6
 jobs:
-  push_image_on_docker_hub:
+  tests:
     docker:
-      - image: cimg/base:2022.06
+      - image: cimg/python:3.10.2
     steps:
       - checkout
-      - setup_remote_docker
+      - run: pip install -r requirements.txt
+      - run: python manage.py test
+      - run: ./autoformat.sh
+  push_image_on_docker_hub:
+    docker:
+      - image: cimg/python:3.10.2
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
       - run: |
           docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-          docker build --build-arg SECRET_KEY=${SECRET_KEY} -t oc-lettings-ribeiro:$CIRCLE_SHA1 .
+          docker build --build-arg SECRET_KEY=${SECRET_KEY} -t hamsterozor/oc-lettings-ribeiro:$CIRCLE_SHA1 .
           docker push hamsterozor/oc-lettings-ribeiro:$CIRCLE_SHA1
-      - run: echo "OUAIIIIS"
   push_image_on_heroku:
     executor: heroku/default
     docker:
@@ -33,5 +41,6 @@ jobs:
 workflows:
   heroku_deploy:
     jobs:
+      - tests
       - push_image_on_docker_hub
       - push_image_on_heroku

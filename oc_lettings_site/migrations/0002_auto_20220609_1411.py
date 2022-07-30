@@ -2,6 +2,7 @@
 
 from django.db import migrations
 
+
 def forwards_func(apps, schema_editor):
     oc_lettings_address = apps.get_model("oc_lettings_site", "Address")
     oc_lettings_letting = apps.get_model("oc_lettings_site", "Letting")
@@ -14,31 +15,48 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     addresses = []
     for line in oc_lettings_address.objects.all().order_by("id"):
-        addresses.append(Address(
-            id=line.id ,number=line.number, street=line.street, city=line.city, state=line.state, zip_code=line.zip_code, country_iso_code=line.country_iso_code,
-        ))
+        addresses.append(
+            Address(
+                id=line.id,
+                number=line.number,
+                street=line.street,
+                city=line.city,
+                state=line.state,
+                zip_code=line.zip_code,
+                country_iso_code=line.country_iso_code,
+            )
+        )
     Address.objects.using(db_alias).bulk_create(addresses)
 
     lettings = []
     for line in oc_lettings_letting.objects.all().order_by("id"):
-        lettings.append(Letting(
-            id=line.id, title=line.title, address=Address.objects.get(id=line.address.id),
-        ))
+        lettings.append(
+            Letting(
+                id=line.id,
+                title=line.title,
+                address=Address.objects.get(id=line.address.id),
+            )
+        )
     Letting.objects.using(db_alias).bulk_create(lettings)
 
     profiles = []
     for line in oc_lettings_profile.objects.all().order_by("id"):
-        profiles.append(Profile(
-          id=line.id, user=line.user, favorite_city=line.favorite_city,
-        ))
+        profiles.append(
+            Profile(
+                id=line.id,
+                user=line.user,
+                favorite_city=line.favorite_city,
+            )
+        )
     Profile.objects.using(db_alias).bulk_create(profiles)
+
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('oc_lettings_site', '0001_initial'),
-        ('lettings', '0001_initial'),
-        ('profiles', '0001_initial'),
+        ("oc_lettings_site", "0001_initial"),
+        ("lettings", "0001_initial"),
+        ("profiles", "0001_initial"),
     ]
 
     operations = [
