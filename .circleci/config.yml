@@ -1,0 +1,55 @@
+version: 2.1
+orbs: 
+  heroku: circleci/heroku@1.2.6
+jobs:
+  tests:
+    docker:
+      - image: cimg/python:3.10.2
+    steps:
+      - checkout
+      - run: pip install -r requirements.txt
+      - run: python manage.py test
+      - run: ./autoformat.sh
+  push_image_on_docker_hub:
+    docker:
+      - image: cimg/python:3.10.2
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+      - run: |
+          docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+          docker build --build-arg SECRET_KEY=${SECRET_KEY} -t hamsterozor/oc-lettings-ribeiro:$CIRCLE_SHA1 .
+          docker push hamsterozor/oc-lettings-ribeiro:$CIRCLE_SHA1
+  push_image_on_heroku:
+    executor: heroku/default
+    docker:
+      - image: cimg/base:2022.06
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+      - heroku/install
+      - run: HEROKU_API_KEY=${HEROKU_API_KEY} heroku apps:create oc-lettings-ribeiro || true
+      - run: |
+          HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set SECRET_KEY=${SECRET_KEY} -a oc-lettings-ribeiro
+          HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set DEBUG=false -a oc-lettings-ribeiro
+          HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set ALLOWED_HOSTS=${ALLOWED_HOSTS} -a oc-lettings-ribeiro
+          HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set SENTRY_DSN=${SENTRY_DSN} -a oc-lettings-ribeiro
+      - run: docker login --username=_ --password=$(heroku auth:token) registry.heroku.com
+      - run: HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push web -a oc-lettings-ribeiro
+      - run: HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release web -a oc-lettings-ribeiro
+workflows:
+  heroku_deploy:
+    jobs:
+      - tests
+      - push_image_on_docker_hub:
+          filters:
+            branches:
+              only:
+                - master
+      - push_image_on_heroku:
+          filters:
+            branches:
+              only:
+                - master
